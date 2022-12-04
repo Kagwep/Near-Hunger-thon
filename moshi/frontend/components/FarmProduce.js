@@ -1,20 +1,50 @@
-import React from 'react'
+import React, { useState } from "react";
+import testImage from "../assets/fam.png";
+import SellModal from "./SellModal";
+
+import Footer from "./Footer";
 
 function FarmProduce() {
+
+  const [sellModalOpen, setSellModalOpen] = useState(false);
+  const handleOpenModal = () => {
+    setSellModalOpen(true);
+  }
+  const handleCloseModal = () => {
+    setSellModalOpen(false);
+  }
   return (
     <div>
-        <div className='sell'>
-            <button> Sell </button>
-            <div className='produce-card'>
-                <div className='card'> 
-                    <div className='card-body'>
-                        name
-                    </div>
-                </div>
-            </div>
+      {sellModalOpen && <SellModal handleCloseModal={handleCloseModal} />}
+      <div className="w3-auto">
+      <br />
+      <br />
+        <div className="w3-center">
+          <button onClick={handleOpenModal} className="w3-button w3-green"> Sell </button>
         </div>
+        <br />
+        <br />
+        <br />
+        <div className="">
+          <div className="w3-row-padding w3-stretch">
+            <div className="card-body w3-margin w3-col l3 m4">
+              <img src={testImage} />
+              Test Farm Produce Design
+            </div>
+            <div className="card-body w3-margin w3-col l3 m4">
+              <img src={testImage} />
+              Test Farm Produce Design
+            </div>
+            <div className="card-body w3-margin w3-col l3 m4">
+              <img src={testImage} />
+              Test Farm Produce Design
+            </div>
+          </div>
+        </div>
+      </div>
+      <Footer />
     </div>
-  )
+  );
 }
 
-export default FarmProduce
+export default FarmProduce;

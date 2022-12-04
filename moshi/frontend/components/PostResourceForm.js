@@ -1,7 +1,54 @@
 import React from 'react'
 
+import { v4 as uuidv4 } from "uuid";
+import { uploadToIPFS } from "../Infura";
+import { useState, useEffect } from "react";
+
 function PostResourceForm({open,onclose, wallet,contractId}) {
+  const [fileResourceURL, setResourceFileURL] = useState(null);
+  const [resources, setProfileResources] = useState([]);
+
   if (!open) return null;
+
+
+  async function OnChangeFile(e) {
+    var file = e.target.files[0];
+
+    const response = await uploadToIPFS(file);
+
+    console.log(response);
+
+    setResourceFileURL(response);
+  }
+
+
+
+  function addResource (e) {
+    e.preventDefault();
+
+    let myuuid = uuidv4();
+
+    let id_gen = myuuid.toString();
+    
+
+    const { resourceName,resourceType,resourceDescription, contractType} = e.target.elements;
+    
+
+  // pub id:String,
+  // pub resource_name: String,
+  // pub resource_type: String,
+  // pub resource_description: String,
+  // pub contract_type:String,
+  // pub image_proof:String,
+
+
+    wallet.callMethod({ method: 'add_resources', 
+      args: { id:id_gen ,resource_name: resourceName.value,resource_type:resourceType.value,resource_description:resourceDescription.value,
+        contract_type:contractType.value,image_proof:fileResourceURL
+    },
+       contractId })};
+
+
   return (
     <div className='overlay'>
     <div className='modalContainer'>
@@ -10,7 +57,7 @@ function PostResourceForm({open,onclose, wallet,contractId}) {
     <button onClick={onclose} className="icon"><i className="fa fa-times" aria-hidden="true"></i></button>
         </div>
     <div>
-    <form onSubmit="" className='postform'>
+    <form onSubmit={addResource} className='postform'>
     
       <fieldset id="fieldset">
         {/* <p>Sign the guest book, { currentAccountId }!</p> */}
@@ -38,21 +85,11 @@ function PostResourceForm({open,onclose, wallet,contractId}) {
         <textarea 
          autoComplete="off"
          autoFocus
-         id='landDescription'
+         id='resourceDescription'
          required
          name='description'
         />
         </label>
-        <label>
-            <p>Location</p>
-            <input
-              autoComplete="off"
-              autoFocus
-              id="LocationNeeded"
-              required
-             name="location" />
-        </label>
-        
         <label htmlFor="contract">
           <p>Contract Type</p>
           <select className='sel'
@@ -68,7 +105,7 @@ function PostResourceForm({open,onclose, wallet,contractId}) {
            </select>
         </label>
         <label>
-            <p>Land Image</p>
+            <p>Proof Image</p>
             <div className='image'>
                 <input
                   
@@ -77,7 +114,7 @@ function PostResourceForm({open,onclose, wallet,contractId}) {
                   id="proofImage"
                   name="location" 
                   type={"file"}
-                  onChange="{OnChangeFile}"
+                  onChange={OnChangeFile}
                   required
 
                 />
