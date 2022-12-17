@@ -3,6 +3,7 @@ import "./Resource.css";
 import testImage from "../assets/fam.png";
 import {useState,useEffect} from 'react'
 import Footer from "./Footer";
+import { Link } from "react-router-dom";
 
 function Resources({wallet,contractId,lands}) {
 
@@ -27,63 +28,83 @@ function Resources({wallet,contractId,lands}) {
 
   return (
     <div>
-      <h2>Farmers who need Resources</h2>
-      <div className="expla">
-        <p>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries,
-        </p>
-      </div>
-      <div className="right">
-        <input
-          className="input"
-          style={{ backgroundColor: "inherit" }}
-          placeholder="search"
-        />
-        <br />
-      </div>
-      <div className="reso">
+      <div className="w3-container w3-center">
 
-          <div className='card'>
+        <div className="w3-row-margin">
+        <h2>Provide Farm  Tools and Equipment To Farmers</h2>
+        
+        </div>
+        
+        <div className="" >
+          <p>
+              The following farmers are looking for potential investors  who will provide the Farm  Tools and Equipment.
+          </p>
+     
+        </div>
 
-                    {Object.values(resources).map((resource, index) => {
+      </div>
+      <div className="w3-auto" style={{marginLeft: "10%", marginRight: "10%"}}>
+          <div className="w3-row-padding w3-stretch w3-center">
+          {Object.values(resources).map((resource, index) => {
                         
-                        if (resource.request_farmer == wallet.accountId){
+                        if (resource.provided == false){
+
+                            const recTo = {
+                              pathname: "/resource-view/" + resource.id,
+                            };
 
                             return (
-                                <div key={index} className="card-body">
-                                    <div>
-                                        <div>
-                                        <img src={resource.image_proof} alt="lands to lease"/>
-                                        </div>
-                                        <h5 className="r-header"> {resource.resource_name} </h5>
-                                        <div>
-                                            {resource.resource_description}
-                                        </div>
-                                        <p>{resource.contract_type}</p>
-                                    </div>
-
-                                    <div className="resource-btn">
-                                      <button>
-                                        Provide Resource
-                                      </button>
-                                    </div>
-
-                                    <hr />
+                              <div key={index} className="w3-col l4 m6">
+                              <div key={index} className="card w3-center sol">
+                                <div className="card-header">
+                                  <img src={resource.image_proof} alt="rover" />
                                 </div>
-                                );
+                                <div className="card-body">
+                                  <h4>
+                                  {resource.resource_name}
+                                  </h4>
+                                  <div className="</div>">
+                                  <p className="w3-padding ">
+                                  {resource.resource_description}
+                                  </p>
+                                  </div>
+                                  <p> {resource.resource_type}</p>
+                                  <div>
+                                    <p>{resource.contract_type}</p>
+                                  </div>
+                                  <div className="user">
+                                    <div className="user-info">
+                                      <h5>
+                                      <div className="resource-btn">
+                                      { wallet.accountId == resource.request_farmer ?    
+                                          <Link className="prn" to={recTo}>
+                                          {" "}
+                                          View more Info
+                                        </Link>
+                                              :                                       
 
-                        }
+                                      <button>
+                                            <Link className="btn-h" to={recTo}>
+                                              {" "}
+                                              Provide
+                                            </Link>
+                                      </button>}
 
-                        })}
+                                    </div>
+                                      </h5>
+                                      <small>{resource.request_farmer}</small>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              </div>
+                        );
 
-                    </div>
-
-      
-          </div>
+                      }
+     
+                     })}
+      </div>
+      </div>
       <Footer />
     </div>
   );

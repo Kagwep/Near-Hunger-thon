@@ -10,7 +10,7 @@ import { Wallet } from "./near-wallet";
 import { ItemsListed } from "./near-interface";
 import { BrowserRouter } from "react-router-dom";
 
-const CONTRACT_ADDRESS = process.env.CONTRACT_NAME;
+const CONTRACT_ADDRESS = "dev-1670843382887-77241312949034";
 
 // When creating the wallet you can optionally ask to create an access key
 // Having the key enables to call non-payable methods without interrupting the user to sign
@@ -21,11 +21,16 @@ const itemsListed = new ItemsListed({
   walletToUse: wallet,
 });
 
+window.nearwallet = wallet;
+window.contractId = process.env.CONTRACT_NAME;
+
 // Setup on page load
 window.onload = async () => {
   const isSignedIn = await wallet.startUp();
   const container = document.getElementById("root");
   const root = createRoot(container); // createRoot(container!) if you use TypeScript
+  window.walletisSignedIn = isSignedIn
+
   root.render(
     <BrowserRouter>
       <App

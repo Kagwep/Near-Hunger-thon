@@ -2,8 +2,24 @@ import React from 'react';
 import Footer from './Footer';
 import { useParams} from 'react-router-dom';
 import {useState,useEffect} from 'react';
+import PartnerLand from './PartnerLand';
 
-function PartnerLandDetails({wallet,contractId}) {
+function PartnerLandDetails({wallet,contractId,isSignedIn}) {
+    let [partnerOpen, setPartnerOpen] = useState(false);
+    const [userProfile, setUserProfile] = useState([]);
+
+    const viewProfile = () => {
+      const profile = wallet.viewMethod({ method: "get_users", contractId }).then((result) => result[wallet.accountId]).then(data => data);
+      return profile;
+  }
+    const handlePartnerModal = () => {
+        setPartnerOpen(true);
+    }
+
+    const closeModal = () => {
+        setPartnerOpen(false);
+    }
+
     const params = useParams();
     console.log(params);
 
@@ -14,6 +30,7 @@ function PartnerLandDetails({wallet,contractId}) {
     useEffect(() => {
   
       getLand().then(setLand);
+      viewProfile().then((data) => (setUserProfile(data)));
   
     }
     , []);
@@ -26,45 +43,73 @@ function PartnerLandDetails({wallet,contractId}) {
       return wallet.viewMethod({ method: "get_land", args: {id: params.id}, contractId });
   
     }
+
+    const signIn = () => {
+        wallet.signIn();
+      };
+
   return (
     <div>
-                <h2> Land Details </h2>
-
-        <div className='container'>
-        <div className='w3-display-container'>
-
-            <div className='w3-center w3-margin '>
-            <div className='w3-card w3-round-xlarge'>
-                <div className="w3-row">
-                    <div class="w3-col m4 l5">
-                    
-                        <img src={land.land_image}  alt="lands to lease" />
-                    </div>
-                    <div className="w3-col m8 l5">
-                        
-                        <p> {land.land_owner}</p>
-                        <div>
-                            {land.land_description}
-                        </div>
-                        <p> Hire Price: Ksh {land.land_price}</p>
-
-                        <p> {land.land_size}</p>
-
-                        <div>
-                            {land.land_lister}
-                        </div>
-
-                        <div>
-                            <button className='w3-green w3-text-white'> Hire land </button>
-                        </div>
-                    </div>
+        <h2> Land Partnership Details </h2>
+        <div>
+            {partnerOpen && <PartnerLand onhandlePartnerModal={closeModal} land={land} wallet={wallet} contractId={contractId}/>}
+        </div>
+        <div className="w3-card ros">
+            <div className='rosim'>
+                <img src={land.land_image} alt="Alps" className='w3-image'/>
+            </div>
+            
+            <div className="w3-container w3-center">
+                <h4 className='w3-text-green'> {land.land_owner} </h4>
+                <p> {land.land_description}</p>
+                <div>
+                {land.land_size}
                 </div>
-            </div>
+                <div className='w3-padding'>
+                    <p className='w3-text-orange'>
+                     <small className='w3-text-green w3-text-bold'>ksh: </small>{land.land_price}
+                    </p>
+                </div>
+                <p className='w3-green'>Requester Details</p>
+                <p>{userProfile.first_name + " " +userProfile.last_name}</p>
+                <p> <i className="fa fa-phone" aria-hidden="true"></i>: {userProfile.phone_number}</p>
+                <p><i className="fa fa-envelope-o" aria-hidden="true"></i>: {userProfile.email}</p>
 
-            </div>
+                {isSignedIn?
+                 <>
+                 { wallet.accountId == land.land_lister ?
 
+                    <p className='prn'> You are the Owner</p>
+
+                    :
+                    <div className='w3-padding'>
+                    <button className='w3-green w3-text-white' onClick={handlePartnerModal}> Accept Partnership </button>
+                    </div>
+
+                    }
+                 
+                 </>
+                 :
+                 <>
+                  { wallet.accountId == land.land_lister ?
+
+                    <p className='prn'> You are the Owner</p>
+
+                    :
+                    <div className='w3-padding'>
+                    <button className='w3-green w3-text-white' onClick={signIn}> Accept Partnership </button>
+                    </div>
+
+                    }
+                 </>}
+
+
+
+                <p className='w3-padding'>{land.land_lister}</p>
+            </div>
         </div>
-        </div>
+
+
     <Footer />
     </div>
   )
